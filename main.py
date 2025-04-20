@@ -1,13 +1,24 @@
 import pygame, sys
 from pygame.locals import *
 
+
+
+
 pygame.init()
 
 pygame.display.set_caption("test")
 width, height = 800, 600  
 screen = pygame.display.set_mode((width, height))
 
+def text(pos,string, size=10, color=(255,0,0), fnt="Arial"):
+    screen.blit(pygame.font.SysFont(fnt, size).render(str(string), True, color), pos)
 
+def drawUI(eur, eurps=None):
+    pygame.draw.rect(screen, (50,50,60), (0,0,800,60))
+
+    text((10,10), f"{eur}€", 20)
+
+    
 
 
 def drawBadge(pos, type=0, badgetext="",pressed=False, hover=False, mult=1):
@@ -30,7 +41,7 @@ def drawBadge(pos, type=0, badgetext="",pressed=False, hover=False, mult=1):
 
     pygame.draw.rect(screen, DARKPART, (pos[0], pos[1], 120*mult, 60*mult))
     pygame.draw.rect(screen, LIGHTPART, (pos[0]+(5*mult), pos[1]+(5*mult), 110*mult, 50*mult))
-    font = pygame.font.SysFont("Arial", 10)  # Create font object
+    font = pygame.font.SysFont("Arial", 10) 
     text_surface = font.render(str(badgetext), True, (255, 0, 0))
     text_rect = text_surface.get_rect() 
 
@@ -41,12 +52,11 @@ def drawBadge(pos, type=0, badgetext="",pressed=False, hover=False, mult=1):
     screen.blit(text_surface, text_rect)
 
 
-
 global_x = 0
 global_y = 0
 mouse_was_pressed = False
 dragging = False
-points=0
+euro=1
 clock = pygame.time.Clock()
 running = True
 while running:
@@ -79,18 +89,18 @@ while running:
     
     if rect.collidepoint(mouse_x,mouse_y):
         if mouse_pressed:
-            drawBadge((10+global_x,10+global_y),0,points,True, True)
+            drawBadge((10+global_x,10+global_y),0,euro,True, True)
         else:
-            drawBadge((10+global_x,10+global_y),1,points,False, True)
+            drawBadge((10+global_x,10+global_y),1,euro,False, True)
         if mouse_pressed and not mouse_was_pressed:
-            points += 1
+            euro += 1
             mouse_was_pressed = True
         elif not mouse_pressed:
             
             mouse_was_pressed = False
     
     else:
-        drawBadge((10+global_x,10+global_y), 1, points)
+        drawBadge((10+global_x,10+global_y), 1, euro)
     
     if dragging and not rect.collidepoint(mouse_x,mouse_y):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -105,6 +115,9 @@ while running:
         if abs(delta_y) >= 15:
             global_y += delta_y
             start_y = mouse_y 
+
+    drawUI(euro)
+
 
     pygame.display.flip()
     screen.fill((0,0,0))
